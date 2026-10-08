@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>GPT Cracker - 7 Questions</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#070b14;color:#eaf2ff}
+.app{min-height:100vh;padding:24px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.logo{font-size:30px;font-weight:800}
+.sub{color:#8290a8;margin-top:5px}
+.score{background:#111a2b;padding:12px 22px;border-radius:12px;text-align:center}
+.score b{font-size:25px}
+.layout{display:grid;grid-template-columns:270px 1fr;gap:20px;max-width:1250px;margin:auto}
+.panel,.game{background:#0d1422;border:1px solid #1d2a40;border-radius:16px}
+.panel{padding:15px}
+.panel h3{margin:5px 8px 14px}
+.challenge{width:100%;border:1px solid #1d2a40;background:#111a2b;color:#dce7f7;padding:12px;margin:5px 0;border-radius:10px;text-align:left;cursor:pointer}
+.challenge:hover,.challenge.active{border-color:#55d6ff;background:#12263a}
+.challenge small{display:block;color:#8290a8;margin-top:4px}
+.game{padding:22px}
+.badge{display:inline-block;padding:5px 9px;border-radius:7px;background:#163149;color:#55d6ff;font-size:12px;font-weight:bold}
+.gamehead{display:flex;justify-content:space-between;gap:15px}
+.gamehead h1{margin-bottom:6px}
+.attempts{text-align:right;color:#8290a8}
+.attempts b{color:#fff;font-size:20px}
+.question{margin-top:18px;padding:18px;background:#111a2b;border:1px solid #27364e;border-radius:12px;font-size:18px;line-height:1.6}
+.question-label{color:#55d6ff;font-size:12px;font-weight:bold;margin-bottom:8px}
+.question img{display:block;max-width:100%;max-height:340px;margin:14px auto 0;border-radius:10px}
+.terminal{margin-top:20px;background:#05080e;border-radius:12px;border:1px solid #202d42;overflow:hidden}
+.termbar{padding:10px 14px;background:#101827;color:#8290a8}
+.dots{letter-spacing:5px}
+.term{height:220px;padding:18px;overflow:auto;font-family:Consolas,monospace;font-size:15px;line-height:1.7}
+.ai{color:#a9d8ff}.you{color:#fff}.ok{color:#6ff0a0}.bad{color:#ff8795}.hint{color:#77869e}
+textarea{width:100%;margin-top:16px;background:#0a101b;border:1px solid #27364e;border-radius:10px;color:white;padding:15px;font:15px Arial;resize:vertical;outline:none}
+textarea:focus{border-color:#55d6ff}
+button.submit{width:100%;margin-top:10px;padding:14px;border:0;border-radius:10px;background:#168cc0;color:white;font-weight:bold;font-size:15px;cursor:pointer}
+button.submit:hover{background:#20a6df}
+button.submit:disabled{background:#465469;cursor:not-allowed}
+footer{text-align:center;color:#596980;margin-top:20px;font-size:13px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.top{align-items:flex-start}.gamehead{flex-direction:column}.attempts{text-align:left}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="top">
+<div>
+<div class="logo">⚡ GPT CRACKER</div>
+<div class="sub">7 Question Challenge</div>
+</div>
+<div class="score">SCORE<br><b id="score">0</b></div>
+</div>
+
+<div class="layout">
+<aside class="panel">
+<h3>QUESTIONS</h3>
+<div id="list"></div>
+</aside>
+
+<section class="game">
+<div class="gamehead">
+<div>
+<span class="badge" id="badge">QUESTION 1</span>
+<h1 id="title">Question 1</h1>
+<p id="desc">Read the question and enter your answer.</p>
+</div>
+<div class="attempts">ATTEMPTS<br><b id="attempts">3/3</b></div>
+</div>
+
+<div class="question">
+<div class="question-label">QUESTION</div>
+<div id="questionText"></div>
+</div>
+
+<div class="terminal">
+<div class="termbar"><span class="dots">● ● ●</span> &nbsp; AI TERMINAL</div>
+<div class="term" id="term">
+<div class="ai">AI SYSTEM ONLINE...</div>
+<div>Read the question and enter your answer below.</div>
+<div class="hint">You have 3 attempts.</div>
+</div>
+</div>
+
+<textarea id="prompt" rows="3" placeholder="Enter your answer..."></textarea>
+<button class="submit" id="submit">🚀 SUBMIT ANSWER</button>
+</section>
+</div>
+
+<footer>GPT Cracker • 7 Question Challenge</footer>
+</div>
+
+<script>
+const questions=[
+{
+question:"What word can you form by combining the meanings of these two emojis?<br><br>💊 + 🧑‍⚕️",
+answer:["pharmacy"],
+displayAnswer:"Pharmacy"
+},
+{
+question:"I can move very quickly.<br>I may carry people or equipment.<br>Some of me can travel beyond Earth.<br><br>What am I?",
+answer:["rocket"],
+displayAnswer:"Rocket"
+},
+{
+question:"In AI, I can be a method used to solve a problem.<br>In computer science, I can be a step-by-step technique.<br>In optimization, I may search for the best solution.<br><br>What am I?",
+answer:["algorithm"],
+displayAnswer:"Algorithm"
+},
+{
+question:"I can be opened or closed.<br>I can protect something valuable.<br>I may have a key or combination.<br><br>What am I?",
+answer:["d","door"],
+displayAnswer:"D"
+},
+{
+question:"I am a symbol commonly used to represent an unknown value in mathematics.<br><br>What am I?",
+answer:["x"],
+displayAnswer:"X"
+},
+{
+question:"Look at the image and identify the item associated with the person preparing food.<br><br>What am I?",
+answer:["apron"],
+displayAnswer:"Apron",
+image:"images/question6.jpeg"
+},
+{
+question:"Look at the hospital scene and identify the medical equipment associated with helping a patient receive oxygen.<br><br>What am I?",
+answer:["oxygen mask","oxygenmask"],
+displayAnswer:"Oxygen mask",
+image:"images/question7.jpeg"
+}
+];
+
+let current=0,score=0,tries=3,solved=new Set();
+
+const $=id=>document.getElementById(id);
+
+function drawList(){
+$("list").innerHTML=questions.map((q,i)=>`
+<button class="challenge ${i===current?'active':''}" onclick="choose(${i})">
+<b>Question ${i+1}</b>
+<small>10 points</small>
+</button>`).join("");
+}
+
+function choose(i){
+current=i;
+tries=3;
+$("submit").disabled=false;
+update();
+drawList();
+$("term").innerHTML=`
+<div class="ai">AI SYSTEM ONLINE...</div>
+<div>Question ${i+1} selected.</div>
+<div class="hint">Read the question and enter your answer.</div>`;
+$("prompt").value="";
+$("prompt").focus();
+}
+
+function update(){
+let q=questions[current];
+$("badge").textContent="QUESTION "+(current+1);
+$("title").textContent="Question "+(current+1);
+$("desc").textContent="Read the question and enter your answer.";
+$("questionText").innerHTML=q.question+(q.image?`<img src="${q.image}" alt="Question image">`:"");
+$("attempts").textContent=tries+"/3";
+$("score").textContent=score;
+}
+
+function add(t,cl){
+$("term").innerHTML+=`<div class="${cl}">${t}</div>`;
+$("term").scrollTop=$("term").scrollHeight;
+}
+
+function normalize(s){
+return s.toLowerCase().trim().replace(/[^a-z0-9]+/g,"");
+}
+
+function esc(s){
+return s.replace(/[&<>"']/g,m=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[m]));
+}
+
+function submit(){
+let p=$("prompt").value.trim();
+if(!p){
+add("⚠ Please enter an answer first.","bad");
+return;
+}
+if(solved.has(current)){
+add("AI: This question is already solved.","hint");
+return;
+}
+if(tries<=0){
+add("❌ No attempts remaining. Select the question again to retry.","bad");
+return;
+}
+
+tries--;
+update();
+add("<b>YOU:</b> "+esc(p),"you");
+
+let user=normalize(p);
+let correct=questions[current].answer.some(a=>normalize(a)===user);
+
+if(correct){
+solved.add(current);
+score+=10;
+add("<b>AI:</b> ✅ Correct!","ok");
+add("✓ SUCCESS! +10 POINTS","ok");
+$("submit").disabled=true;
+update();
+}else{
+add("<b>AI:</b> ❌ Incorrect answer. Try again.","bad");
+add("Attempts remaining: "+tries,"hint");
+if(tries===0){
+$("submit").disabled=true;
+add("❌ Question locked. Select the question again to retry.","bad");
+}
+}
+$("prompt").value="";
+$("prompt").focus();
+}
+
+$("submit").onclick=submit;
+$("prompt").addEventListener("keydown",e=>{
+if(e.ctrlKey&&e.key==="Enter")submit();
+});
+window.choose=choose;
+drawList();
+update();
+</script>
+</body>
+</html>
